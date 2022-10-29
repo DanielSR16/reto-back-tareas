@@ -1,7 +1,7 @@
 const express = require("express");
 const app =  express();
 app.use(express.json());
-const conexion = require('./DB/DB_conection')
+const conexion = require('./src/DB/DB_conection')
 
 
 //Tareas ruta
