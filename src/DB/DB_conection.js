@@ -8,12 +8,12 @@ const conexion = mysql.createConnection({
   password: 'DANIELsr00'
 });
 
-conc.firstConec =  conexion.connect((err)=>{
+ conexion.connect((err)=>{
     if(err) throw err;
     console.log("conexion a base de datos exitosa");
 
 });
 
 
-module.exports = conc;
+module.exports = conexion;
 
