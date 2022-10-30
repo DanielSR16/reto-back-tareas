@@ -1,16 +1,16 @@
 const conexion = require('../DB/DB_conection')
-const model =  require('../model/tarea_model')
+const model =  require('../model/task_model')
 
 const controllerTarea = {}
 
 
-controllerTarea.get_tarea = (req,res) =>{
+controllerTarea.get_task = (req,res) =>{
    
     var data = req.body
     var keys =  Object.keys(data);
  
    if(keys.includes("id_tarea") && keys.includes("id_usuario")){
-        model.getTarea(data,function(data_result){
+        model.getTask(data,function(data_result){
         res.status(201)
         res.send(data_result)
         
@@ -21,20 +21,20 @@ controllerTarea.get_tarea = (req,res) =>{
    
 }
 
-controllerTarea.get_all_tarea = (req,res)=>{
+controllerTarea.get_all_task = (req,res)=>{
    
     var data = req.body
     var keys = Object.keys(data);
 
     if(keys.includes("id_usuario")){
-        model.getAllTarea(data,function(data_result){
+        model.getAllTask(data,function(data_result){
             res.send(data_result)
         })
     }
 
 }
 
-controllerTarea.anadir_tarea = (req,res) =>{
+controllerTarea.add_task  = (req,res) =>{
     var data = req.body
     var keys = Object.keys(data)
     if(
@@ -56,7 +56,7 @@ controllerTarea.anadir_tarea = (req,res) =>{
             }
         
             
-            model.anadirTarea(data,function(data_result){
+            model.addTask(data,function(data_result){
                 res.send(data_result)
             })
         }else{
@@ -71,7 +71,7 @@ controllerTarea.anadir_tarea = (req,res) =>{
 
 }
 
-controllerTarea.editar_tarea = (req,res) =>{
+controllerTarea.edit_task  = (req,res) =>{
     var data_cambio = []
     var nombre_cambio = []
     cambios = {}
@@ -92,8 +92,8 @@ controllerTarea.editar_tarea = (req,res) =>{
                 id_usuario: data.id_usuario
             }
     
-            model.getTarea(data_usuario_tarea,function(resultado){
-                // console.log(resultado)
+            model.getTask(data_usuario_tarea,function(resultado){
+             
             
     
                 if(keys.includes("comentario") == false){
@@ -105,7 +105,7 @@ controllerTarea.editar_tarea = (req,res) =>{
                 if(keys.includes("tags") == false){
                     data.tags = null
                 }
-    
+                
                 var dateString = resultado[0]["fecha"].toISOString();
                 resultado[0].fecha = dateString.substring(0,10)
     
@@ -123,7 +123,7 @@ controllerTarea.editar_tarea = (req,res) =>{
                 cambios.data_cambio = data_cambio
                 
                 if(nombre_cambio.length > 0){
-                    model.editarTarea(cambios,function(resultado_editar){
+                    model.editTask(cambios,function(resultado_editar){
                         res.send(resultado_editar)
                     });
                 }else{
@@ -146,7 +146,24 @@ controllerTarea.editar_tarea = (req,res) =>{
 
 
 }
-controllerTarea.eliminar_tarea = (req,res) =>{
+
+controllerTarea.delete_task  = (req,res) =>{
+    var data = req.body
+    var keys = Object.keys(data)
+    if(keys.includes("id_tarea")){
+        if(check_null(data,keys) == false){
+            model.deleteTask(data,function(data_result){
+        
+                res.send(data_result)
+                
+            });
+        }else{
+            res.sendres.send("Revisar JSON existen datos con valores null que son obligatorios");
+        }
+        
+   }else{
+    res.send("Datos incompletos o erroneos")
+   }
     
 }
 
@@ -165,15 +182,6 @@ function check_null(data,keys){
     });
     return flag;
 }
-
-
-
-
-
-
-
-
-
 
 
 module.exports = controllerTarea;

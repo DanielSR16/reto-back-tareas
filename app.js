@@ -1,12 +1,14 @@
 const express = require("express");
 var bodyParser = require('body-parser')
+require('dotenv').config();
+
 const app =  express();
 app.use(express.json());
 app.use(bodyParser.json())
 
 
 //Tareas ruta
-const tareas = require('./src/routes/tarea_router')
+const tareas = require('./src/routes/task_router')
 app.use('/tarea',tareas)
 
 
