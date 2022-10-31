@@ -63,11 +63,12 @@ function deleteTask(data,callback){
   
 
   conexion.query(
-    "DELETE FROM tareas where id=?",[data.id_tarea]
+    "DELETE FROM tareas where id=? and id_usuario= ?",[data.id_tarea,data.id_usuario]
   , function(err){
     if (err){ 
       throw err;
     }
+    
   
       results = "Tarea Borrada"
       return callback(results);

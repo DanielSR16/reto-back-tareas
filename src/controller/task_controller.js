@@ -1,4 +1,3 @@
-const conexion = require('../DB/DB_conection')
 const model =  require('../model/task_model')
 
 const controllerTarea = {}
@@ -6,90 +5,114 @@ const controllerTarea = {}
 
 controllerTarea.get_task = (req,res) =>{
    
-    var data = req.body
-    var keys =  Object.keys(data);
- 
-   if(keys.includes("id_tarea") && keys.includes("id_usuario")){
-        model.getTask(data,function(data_result){
-        res.status(201)
-        res.send(data_result)
+    if(req.session.userid){
+        var data = req.body
+        var keys =  Object.keys(data);
         
-    });
-   }else{
-    res.send("Datos incompletos o erroneos")
-   }
+       if(keys.includes("id_tarea")){
+            data.id_usuario = req.session.userid
+            
+            model.getTask(data,function(data_result){     
+    
+            res.send(data_result)
+    
+        });
+       }else{
+        res.send("Datos incompletos o erroneos")
+       }
+    }else{
+        res.send("Se necesita un inicio de sesion")
+    }
    
-}
+   
+}  
+
 
 controllerTarea.get_all_task = (req,res)=>{
-   
-    var data = req.body
-    var keys = Object.keys(data);
-
-    if(keys.includes("id_usuario")){
-        model.getAllTask(data,function(data_result){
-            res.send(data_result)
-        })
-    }
+    if(req.session.userid){
+       data = {}
+        data.id_usuario = req.session.userid
+    
+       
+            
+            model.getAllTask(data,function(data_result){
+                res.send(data_result)
+            })
+       
+       }else{
+        res.send("Se necesita un inicio de sesion")
+       }
+    
+    
 
 }
 
 controllerTarea.add_task  = (req,res) =>{
-    var data = req.body
-    var keys = Object.keys(data)
-    if(
-    keys.includes("id_usuario") && 
-    keys.includes("titulo") && 
-    keys.includes("descripcion")&& 
-    keys.includes("status") && 
-    keys.includes("fecha") ){
-        if(check_null(data,keys) == false){
-            if(keys.includes("comentario") == false){
-                data.comentario = null
-            }
-            if(keys.includes("responsable") == false){
-                data.responsable = null
-            }
-            if(keys.includes("tags") == false){
-                data.tags = null
-                
-            }
-        
-            
-            model.addTask(data,function(data_result){
-                res.send(data_result)
-            })
-        }else{
-            res.send("Revisar JSON existen datos con valores null que son obligatorios");
-        }
-        
 
+    if(req.session.userid){
+        var data = req.body
+        var keys = Object.keys(data)
+        if(
+        
+        keys.includes("titulo") && 
+        keys.includes("descripcion")&& 
+        keys.includes("status") && 
+        keys.includes("fecha") ){
+            if(check_null(data,keys) == false){
+                if(keys.includes("comentario") == false){
+                    data.comentario = null
+                }
+                if(keys.includes("responsable") == false){
+                    data.responsable = null
+                }
+                if(keys.includes("tags") == false){
+                    data.tags = null
+                    
+                }
+              
+                data.id_usuario = req.session.userid
+            
+                
+                model.addTask(data,function(data_result){
+                    res.send(data_result)
+                })
+            }else{
+                res.send("Revisar JSON existen datos con valores null que son obligatorios");
+            }
+            
+    
+        }else{
+            res.send("Faltaron datos para poder registrar la tarea");
+        }
     }else{
-        res.send("Faltaron datos para poder registrar la tarea");
+        res.send("Se necesita un inicio de sesion")
     }
+   
   
 
 }
 
 controllerTarea.edit_task  = (req,res) =>{
-    var data_cambio = []
+
+
+    if(req.session.userid){
+        var data_cambio = []
     var nombre_cambio = []
     cambios = {}
 
     var data = req.body
     var keys = Object.keys(data)
     if(keys.includes("id") &&
-    keys.includes("id_usuario") && 
     keys.includes("titulo") && 
     keys.includes("descripcion")&& 
     keys.includes("status") && 
     keys.includes("fecha") ){
-
+ 
         if(check_null(data,keys) == false){
 
             var data_usuario_tarea ={
                 id_tarea: data.id,
-                id_usuario: data.id_usuario
+                id_usuario: req.session.userid
             }
     
             model.getTask(data_usuario_tarea,function(resultado){
@@ -140,6 +163,11 @@ controllerTarea.edit_task  = (req,res) =>{
     }else{
         res.send("Faltaron datos para poder actualizar la tarea")
     }
+
+    }else{
+        res.send("Se necesita un inicio de sesion")
+    }
+    
     
 
 
@@ -148,22 +176,30 @@ controllerTarea.edit_task  = (req,res) =>{
 }
 
 controllerTarea.delete_task  = (req,res) =>{
-    var data = req.body
-    var keys = Object.keys(data)
-    if(keys.includes("id_tarea")){
-        if(check_null(data,keys) == false){
-            model.deleteTask(data,function(data_result){
-        
-                res.send(data_result)
+    
+    if(req.session.userid){
+            var data = req.body
+            var keys = Object.keys(data)
+            if(keys.includes("id_tarea")){
+                data.id_usuario = req.session.userid
+                if(check_null(data,keys) == false){
+                    model.deleteTask(data,function(data_result){
                 
-            });
-        }else{
-            res.sendres.send("Revisar JSON existen datos con valores null que son obligatorios");
-        }
-        
-   }else{
-    res.send("Datos incompletos o erroneos")
-   }
+                        res.send(data_result)
+                        
+                    });
+                }else{
+                    res.sendres.send("Revisar JSON existen datos con valores null que son obligatorios");
+                }
+                
+           }else{
+            res.send("Datos incompletos o erroneos")
+           }
+    }else{
+        res.send("Se necesita un inicio de sesion")
+    }
+
+    
     
 }
 
