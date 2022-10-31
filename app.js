@@ -9,13 +9,13 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.json())
 
-const oneDay = 1000 * 60 * 60 * 24;
+const timeDay = 1000 * 60 * 60 * 24;
 
 //session middleware
 app.use(sessions({
-    secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
-    saveUninitialized:true,
-    cookie: { maxAge: oneDay },
+    secret: process.env.SECRET,
+    saveUninitialized:false,
+    cookie: { maxAge: timeDay },
     resave: false
 }));
 

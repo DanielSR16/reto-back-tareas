@@ -5,9 +5,10 @@ const model =  require('../model/user_model')
 controllerUser = {}
 
 controllerUser.login = (req,res) =>{
+    
     var data =  req.body
     var keys = Object.keys(data)
-   
+
     if((keys.includes("usuario") && keys.includes("contrasenia"))){
         model.login(data,function(result){
             
@@ -17,7 +18,9 @@ controllerUser.login = (req,res) =>{
                 session=req.session;
                 session.userid=result[0]["id_usuario"];
                 res.send("Sesion iniciada con exito")
+               
             }
+
             
         })
        
@@ -29,9 +32,9 @@ controllerUser.login = (req,res) =>{
 }
 
 controllerUser.logout = (req,res) =>{
-    // req.session.destroy()
+    req.session.destroy()
     res.send("Sesion cerrada")
-    console.log(req.session)
+   
     
 }
 

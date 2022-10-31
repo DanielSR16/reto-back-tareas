@@ -116,9 +116,7 @@ controllerTarea.edit_task  = (req,res) =>{
             }
     
             model.getTask(data_usuario_tarea,function(resultado){
-             
-            
-    
+
                 if(keys.includes("comentario") == false){
                     data.comentario = null
                 }
@@ -128,31 +126,40 @@ controllerTarea.edit_task  = (req,res) =>{
                 if(keys.includes("tags") == false){
                     data.tags = null
                 }
-                
-                var dateString = resultado[0]["fecha"].toISOString();
-                resultado[0].fecha = dateString.substring(0,10)
-    
-                keys = Object.keys(data)
-                
-                
-                keys.forEach(element => {
-                    if(data[element] != resultado[0][element]){
-                        nombre_cambio.push(element)
-                        data_cambio.push(data[element])
-                    }
-                });
-                cambios.id_tarea = data.id
-                cambios.name_cambio = nombre_cambio
-                cambios.data_cambio = data_cambio
-                
-                if(nombre_cambio.length > 0){
-                    model.editTask(cambios,function(resultado_editar){
-                        res.send(resultado_editar)
+             
+                if(resultado.length >0){
+                    
+                   
+                    
+                    var dateString = resultado[0]["fecha"].toISOString();
+                    resultado[0].fecha = dateString.substring(0,10)
+        
+                    keys = Object.keys(data)
+                    
+                    
+                    keys.forEach(element => {
+                        if(data[element] != resultado[0][element]){
+                            nombre_cambio.push(element)
+                            data_cambio.push(data[element])
+                        }
                     });
+                    cambios.id_tarea = data.id
+                    cambios.name_cambio = nombre_cambio
+                    cambios.data_cambio = data_cambio
+                    
+                    if(nombre_cambio.length > 0){
+                        model.editTask(cambios,function(resultado_editar){
+                            res.send(resultado_editar)
+                        });
+                    }else{
+                      
+                        res.send("El objeto enviado es el mismo que el la base de datos")
+                    }
                 }else{
-                  
-                    res.send("El objeto enviado es el mismo que el la base de datos")
+                    res.send("No se encontro la tarea")
                 }
+    
+               
                
             })
            

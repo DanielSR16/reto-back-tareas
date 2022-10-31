@@ -45,8 +45,8 @@ function editTask(data,callback){
   });
 
   sql =sql.substring(0,sql.length-1)
-  sql = sql + " where id= " + data.id_tarea
-  console.log(sql)
+  sql = sql + " where id = " + data.id_tarea
+  
 
   conexion.query(sql,data.data_cambio
   , function(err){
@@ -64,13 +64,19 @@ function deleteTask(data,callback){
 
   conexion.query(
     "DELETE FROM tareas where id=? and id_usuario= ?",[data.id_tarea,data.id_usuario]
-  , function(err){
+  , function(err,resul){
     if (err){ 
       throw err;
     }
-    
   
-      results = "Tarea Borrada"
+      var results = ''
+      if(resul["affectedRows"] == 0 ){
+        results= "No se elimino la tarea"
+      }else{
+        results= "Tarea borrada"
+      }
+  
+      
       return callback(results);
   })
 }
